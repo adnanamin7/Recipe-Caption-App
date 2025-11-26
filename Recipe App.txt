@@ -1,0 +1,523 @@
+import React, { useState } from 'react';
+import { Upload, Link2, Video, FileText, Image, Youtube, Loader2, Download, ChefHat, Clock, Users, Sparkles } from 'lucide-react';
+
+export default function RecipeVideoApp() {
+  const [activeTab, setActiveTab] = useState('upload');
+  const [videoFile, setVideoFile] = useState(null);
+  const [youtubeUrl, setYoutubeUrl] = useState('');
+  const [processing, setProcessing] = useState(false);
+  const [results, setResults] = useState(null);
+  const [extractionProgress, setExtractionProgress] = useState(0);
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('video/')) {
+      setVideoFile(file);
+      setResults(null);
+    }
+  };
+
+  const extractRecipeFromVideo = async () => {
+    setProcessing(true);
+    setExtractionProgress(0);
+    
+    // Simulate AI processing
+    const steps = [
+      'Analyzing video frames...',
+      'Extracting audio transcription...',
+      'Identifying ingredients...',
+      'Detecting cooking steps...',
+      'Generating captions...',
+      'Creating thumbnails...',
+      'Optimizing for YouTube Shorts...',
+      'Finalizing content...'
+    ];
+
+    for (let i = 0; i < steps.length; i++) {
+      await new Promise(resolve => setTimeout(resolve, 800));
+      setExtractionProgress(((i + 1) / steps.length) * 100);
+    }
+
+    // Generate mock results
+    const mockResults = {
+      recipe: {
+        title: 'Creamy Garlic Parmesan Pasta',
+        prepTime: '10 minutes',
+        cookTime: '15 minutes',
+        servings: '4 people',
+        ingredients: [
+          '400g pasta (fettuccine or linguine)',
+          '4 cloves garlic, minced',
+          '2 cups heavy cream',
+          '1 cup grated Parmesan cheese',
+          '2 tbsp butter',
+          '1 tsp Italian seasoning',
+          'Salt and pepper to taste',
+          'Fresh parsley for garnish'
+        ],
+        steps: [
+          'Bring a large pot of salted water to boil and cook pasta according to package directions.',
+          'In a large skillet, melt butter over medium heat and sauté minced garlic until fragrant (about 1 minute).',
+          'Pour in heavy cream and bring to a gentle simmer. Cook for 3-4 minutes, stirring occasionally.',
+          'Add Parmesan cheese gradually, stirring constantly until melted and sauce is smooth.',
+          'Season with Italian seasoning, salt, and pepper.',
+          'Drain pasta and add to the sauce. Toss to coat evenly.',
+          'Garnish with fresh parsley and extra Parmesan. Serve immediately.'
+        ],
+        tips: [
+          'Use freshly grated Parmesan for the best flavor and texture',
+          'Don\'t let the sauce boil rapidly or it may separate',
+          'Reserve some pasta water to thin the sauce if needed'
+        ]
+      },
+      captions: {
+        short: '🍝 Quick & Creamy Garlic Parmesan Pasta in 25 mins! Perfect comfort food for busy weeknights. #pasta #quickrecipe #comfortfood',
+        long: '🍝 Creamy Garlic Parmesan Pasta Recipe\n\nReady in just 25 minutes! This restaurant-quality pasta is incredibly easy to make at home. Rich, creamy, and packed with garlic and Parmesan flavor.\n\n⏱️ Prep: 10 min | Cook: 15 min\n👥 Serves: 4\n\n✨ Perfect for:\n• Busy weeknight dinners\n• Date night at home\n• Comfort food cravings\n\n📝 Full recipe in description!\n\n#PastaRecipe #ItalianFood #ComfortFood #EasyRecipes #Homemade #Foodie #CookingAtHome #QuickDinner #GarlicParmesan'
+      },
+      thumbnails: [
+        { id: 1, style: 'Close-up of creamy pasta twirl on fork', color: '#FF6B6B' },
+        { id: 2, style: 'Overhead shot of pasta in pan with ingredients', color: '#4ECDC4' },
+        { id: 3, style: 'Before/After split with text overlay', color: '#FFE66D' }
+      ],
+      shorts: {
+        hookIdeas: [
+          'Start with the pasta being tossed in creamy sauce (most satisfying moment)',
+          'Open with "Stop buying jarred sauce!" text overlay',
+          'Begin with ingredients laid out, quick transition to final dish'
+        ],
+        musicSuggestions: [
+          'Upbeat cooking montage music',
+          'Trending Italian-themed audio',
+          'Fast-paced pop instrumental'
+        ],
+        editingTips: [
+          'Keep first 3 seconds high-energy to hook viewers',
+          'Use text overlays for ingredient measurements',
+          'End with close-up money shot of the dish',
+          'Add trending hashtags in caption'
+        ]
+      },
+      seo: {
+        title: 'Easy Creamy Garlic Parmesan Pasta Recipe | Ready in 25 Minutes!',
+        tags: [
+          'pasta recipe',
+          'easy dinner',
+          'garlic parmesan pasta',
+          'creamy pasta',
+          'quick recipes',
+          'italian food',
+          'comfort food',
+          'weeknight dinner',
+          'cooking tutorial',
+          'homemade pasta'
+        ],
+        description: 'Learn how to make the creamiest Garlic Parmesan Pasta in just 25 minutes! This restaurant-quality dish is perfect for busy weeknights. Simple ingredients, incredible flavor.\n\n⏱️ TIMESTAMPS:\n0:00 - Intro\n0:15 - Ingredients\n0:45 - Cooking the pasta\n1:30 - Making the sauce\n3:00 - Combining & serving\n3:45 - Final result\n\n🛒 INGREDIENTS:\n[Full ingredient list]\n\n📝 FULL WRITTEN RECIPE:\n[Your website link]\n\n💡 TIPS & VARIATIONS:\n• Make it spicy: Add red pepper flakes\n• Add protein: Grilled chicken or shrimp\n• Veggie boost: Spinach or sun-dried tomatoes\n\n👨‍🍳 MORE PASTA RECIPES:\n[Links to other videos]\n\n📱 CONNECT WITH ME:\nInstagram: @yourhandle\nTikTok: @yourhandle\nPinterest: @yourhandle'
+      }
+    };
+
+    setResults(mockResults);
+    setProcessing(false);
+  };
+
+  const handleProcessVideo = async () => {
+    if (activeTab === 'upload' && !videoFile) {
+      alert('Please upload a video file');
+      return;
+    }
+    if (activeTab === 'youtube' && !youtubeUrl) {
+      alert('Please enter a YouTube URL');
+      return;
+    }
+    
+    await extractRecipeFromVideo();
+  };
+
+  const downloadAsText = (content, filename) => {
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const exportRecipe = () => {
+    if (!results) return;
+    
+    const content = `
+${results.recipe.title}
+${'='.repeat(results.recipe.title.length)}
+
+Prep Time: ${results.recipe.prepTime}
+Cook Time: ${results.recipe.cookTime}
+Servings: ${results.recipe.servings}
+
+INGREDIENTS:
+${results.recipe.ingredients.map((ing, i) => `${i + 1}. ${ing}`).join('\n')}
+
+INSTRUCTIONS:
+${results.recipe.steps.map((step, i) => `${i + 1}. ${step}`).join('\n\n')}
+
+TIPS:
+${results.recipe.tips.map(tip => `• ${tip}`).join('\n')}
+
+---
+
+YOUTUBE CAPTION (Short):
+${results.captions.short}
+
+YOUTUBE DESCRIPTION:
+${results.captions.long}
+
+SEO TITLE:
+${results.seo.title}
+
+TAGS:
+${results.seo.tags.join(', ')}
+
+FULL DESCRIPTION:
+${results.seo.description}
+    `.trim();
+    
+    downloadAsText(content, 'recipe-content.txt');
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-50">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <div className="flex items-center gap-3">
+            <div className="bg-gradient-to-br from-orange-500 to-red-500 p-3 rounded-xl shadow-lg">
+              <ChefHat className="w-8 h-8 text-white" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+                Recipe Video Content Generator
+              </h1>
+              <p className="text-gray-600 text-sm">Transform cooking videos into complete content packages</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {!results ? (
+          <div className="bg-white rounded-2xl shadow-xl p-8">
+            {/* Tabs */}
+            <div className="flex gap-4 mb-8 border-b border-gray-200">
+              <button
+                onClick={() => setActiveTab('upload')}
+                className={`flex items-center gap-2 px-6 py-3 font-medium transition-all ${
+                  activeTab === 'upload'
+                    ? 'border-b-2 border-orange-500 text-orange-600'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                <Upload className="w-5 h-5" />
+                Upload Video
+              </button>
+              <button
+                onClick={() => setActiveTab('youtube')}
+                className={`flex items-center gap-2 px-6 py-3 font-medium transition-all ${
+                  activeTab === 'youtube'
+                    ? 'border-b-2 border-orange-500 text-orange-600'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                <Youtube className="w-5 h-5" />
+                YouTube Link
+              </button>
+            </div>
+
+            {/* Upload Tab */}
+            {activeTab === 'upload' && (
+              <div className="space-y-6">
+                <div className="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center hover:border-orange-400 transition-colors">
+                  <input
+                    type="file"
+                    accept="video/*"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                    id="video-upload"
+                  />
+                  <label htmlFor="video-upload" className="cursor-pointer">
+                    <Video className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                    <p className="text-lg font-medium text-gray-700 mb-2">
+                      {videoFile ? videoFile.name : 'Click to upload or drag and drop'}
+                    </p>
+                    <p className="text-sm text-gray-500">MP4, MOV, AVI (max 500MB)</p>
+                  </label>
+                </div>
+              </div>
+            )}
+
+            {/* YouTube Tab */}
+            {activeTab === 'youtube' && (
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    YouTube Video URL
+                  </label>
+                  <div className="flex gap-3">
+                    <div className="flex-1 relative">
+                      <Link2 className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <input
+                        type="url"
+                        value={youtubeUrl}
+                        onChange={(e) => setYoutubeUrl(e.target.value)}
+                        placeholder="https://youtube.com/watch?v=..."
+                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                  <p className="mt-2 text-sm text-gray-500">
+                    Paste any YouTube video URL containing a recipe
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Process Button */}
+            <div className="mt-8">
+              <button
+                onClick={handleProcessVideo}
+                disabled={processing || (activeTab === 'upload' && !videoFile) || (activeTab === 'youtube' && !youtubeUrl)}
+                className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-4 rounded-xl font-semibold text-lg hover:from-orange-600 hover:to-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+              >
+                {processing ? (
+                  <>
+                    <Loader2 className="w-6 h-6 animate-spin" />
+                    Processing... {Math.round(extractionProgress)}%
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-6 h-6" />
+                    Generate Content
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Features */}
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                { icon: FileText, title: 'Recipe Text', desc: 'Full ingredients & steps' },
+                { icon: Image, title: 'Thumbnails', desc: '3 design concepts' },
+                { icon: Video, title: 'Shorts Ideas', desc: 'Optimized for YT Shorts' },
+                { icon: Youtube, title: 'SEO Content', desc: 'Title, tags & description' }
+              ].map((feature, i) => (
+                <div key={i} className="text-center p-4">
+                  <div className="bg-gradient-to-br from-orange-100 to-red-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                    <feature.icon className="w-8 h-8 text-orange-600" />
+                  </div>
+                  <h3 className="font-semibold text-gray-800">{feature.title}</h3>
+                  <p className="text-sm text-gray-600 mt-1">{feature.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {/* Action Buttons */}
+            <div className="bg-white rounded-2xl shadow-xl p-6 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="bg-green-100 p-3 rounded-full">
+                  <Sparkles className="w-6 h-6 text-green-600" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-800">Content Generated Successfully!</h2>
+                  <p className="text-gray-600">All assets are ready for download and use</p>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={exportRecipe}
+                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg font-medium hover:from-orange-600 hover:to-red-600 transition-all shadow-lg"
+                >
+                  <Download className="w-5 h-5" />
+                  Export All
+                </button>
+                <button
+                  onClick={() => setResults(null)}
+                  className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-medium hover:border-gray-400 transition-all"
+                >
+                  New Video
+                </button>
+              </div>
+            </div>
+
+            {/* Recipe Details */}
+            <div className="bg-white rounded-2xl shadow-xl p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <ChefHat className="w-8 h-8 text-orange-600" />
+                <h2 className="text-2xl font-bold text-gray-800">{results.recipe.title}</h2>
+              </div>
+              
+              <div className="flex gap-6 mb-8 pb-6 border-b border-gray-200">
+                <div className="flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-gray-500" />
+                  <div>
+                    <p className="text-sm text-gray-500">Prep Time</p>
+                    <p className="font-semibold text-gray-800">{results.recipe.prepTime}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-gray-500" />
+                  <div>
+                    <p className="text-sm text-gray-500">Cook Time</p>
+                    <p className="font-semibold text-gray-800">{results.recipe.cookTime}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Users className="w-5 h-5 text-gray-500" />
+                  <div>
+                    <p className="text-sm text-gray-500">Servings</p>
+                    <p className="font-semibold text-gray-800">{results.recipe.servings}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-8">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-800 mb-4">Ingredients</h3>
+                  <ul className="space-y-2">
+                    {results.recipe.ingredients.map((ing, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <span className="text-orange-500 font-bold">•</span>
+                        <span className="text-gray-700">{ing}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <div>
+                  <h3 className="text-lg font-bold text-gray-800 mb-4">Instructions</h3>
+                  <ol className="space-y-3">
+                    {results.recipe.steps.map((step, i) => (
+                      <li key={i} className="flex gap-3">
+                        <span className="flex-shrink-0 w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                          {i + 1}
+                        </span>
+                        <span className="text-gray-700">{step}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </div>
+
+              <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <h4 className="font-bold text-gray-800 mb-2">💡 Pro Tips</h4>
+                <ul className="space-y-1">
+                  {results.recipe.tips.map((tip, i) => (
+                    <li key={i} className="text-gray-700 text-sm">• {tip}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Captions */}
+            <div className="bg-white rounded-2xl shadow-xl p-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">Social Media Captions</h2>
+              <div className="space-y-4">
+                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <h3 className="font-semibold text-gray-800 mb-2">Short Caption (Instagram/TikTok)</h3>
+                  <p className="text-gray-700">{results.captions.short}</p>
+                </div>
+                <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <h3 className="font-semibold text-gray-800 mb-2">Long Caption (YouTube)</h3>
+                  <p className="text-gray-700 whitespace-pre-line">{results.captions.long}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Thumbnail Ideas */}
+            <div className="bg-white rounded-2xl shadow-xl p-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">Thumbnail Concepts</h2>
+              <div className="grid md:grid-cols-3 gap-4">
+                {results.thumbnails.map((thumb) => (
+                  <div key={thumb.id} className="border-2 border-gray-200 rounded-lg p-6 hover:border-orange-400 transition-colors">
+                    <div 
+                      className="w-full h-32 rounded-lg mb-3 flex items-center justify-center"
+                      style={{ backgroundColor: thumb.color }}
+                    >
+                      <Image className="w-12 h-12 text-white opacity-50" />
+                    </div>
+                    <p className="text-sm text-gray-700 font-medium">{thumb.style}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* YouTube Shorts Tips */}
+            <div className="bg-white rounded-2xl shadow-xl p-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">YouTube Shorts Optimization</h2>
+              <div className="grid md:grid-cols-3 gap-6">
+                <div>
+                  <h3 className="font-semibold text-gray-800 mb-3">🎬 Hook Ideas</h3>
+                  <ul className="space-y-2">
+                    {results.shorts.hookIdeas.map((hook, i) => (
+                      <li key={i} className="text-sm text-gray-700">• {hook}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-800 mb-3">🎵 Music</h3>
+                  <ul className="space-y-2">
+                    {results.shorts.musicSuggestions.map((music, i) => (
+                      <li key={i} className="text-sm text-gray-700">• {music}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-800 mb-3">✂️ Editing Tips</h3>
+                  <ul className="space-y-2">
+                    {results.shorts.editingTips.map((tip, i) => (
+                      <li key={i} className="text-sm text-gray-700">• {tip}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* SEO Content */}
+            <div className="bg-white rounded-2xl shadow-xl p-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">SEO & YouTube Optimization</h2>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-semibold text-gray-800 mb-2">Optimized Title</h3>
+                  <p className="text-gray-700 p-3 bg-gray-50 rounded-lg">{results.seo.title}</p>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-800 mb-2">Tags</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {results.seo.tags.map((tag, i) => (
+                      <span key={i} className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-800 mb-2">Full Description</h3>
+                  <p className="text-gray-700 p-4 bg-gray-50 rounded-lg whitespace-pre-line text-sm">
+                    {results.seo.description}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      <div className="bg-white border-t border-gray-200 mt-12">
+        <div className="max-w-7xl mx-auto px-4 py-6 text-center text-gray-600 text-sm">
+          <p>Built with React • Ready for Vercel/Netlify deployment</p>
+          <p className="mt-1">Note: This is a demo. Connect to real AI APIs (Claude, Whisper, etc.) for production use.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
