@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Video Content Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #fff7ed 0%, #fef2f2 50%, #fce7f3 100%);
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    <!-- Header -->
+    <div class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 py-6">
+            <div class="flex items-center gap-3">
+                <div class="bg-gradient-to-br from-orange-500 to-red-500 p-3 rounded-xl shadow-lg">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+                        Recipe Video Content Generator
+                    </h1>
+                    <p class="text-gray-600 text-sm">Transform cooking videos into complete content packages</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Main Content -->
+        <div id="uploadSection" class="bg-white rounded-2xl shadow-xl p-8">
+            <!-- Tabs -->
+            <div class="flex gap-4 mb-8 border-b border-gray-200">
+                <button onclick="switchTab('upload')" id="uploadTab" class="flex items-center gap-2 px-6 py-3 font-medium border-b-2 border-orange-500 text-orange-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                    Upload Video
+                </button>
+                <button onclick="switchTab('youtube')" id="youtubeTab" class="flex items-center gap-2 px-6 py-3 font-medium text-gray-500 hover:text-gray-700">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    YouTube Link
+                </button>
+            </div>
+
+            <!-- Upload Content -->
+            <div id="uploadContent" class="space-y-6">
+                <div class="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center hover:border-orange-400 transition-colors">
+                    <input type="file" accept="video/*" id="videoUpload" class="hidden" onchange="handleFileUpload(event)">
+                    <label for="videoUpload" class="cursor-pointer">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                        </svg>
+                        <p id="uploadText" class="text-lg font-medium text-gray-700 mb-2">Click to upload or drag and drop</p>
+                        <p class="text-sm text-gray-500">MP4, MOV, AVI (max 500MB)</p>
+                    </label>
+                </div>
+            </div>
+
+            <!-- YouTube Content -->
+            <div id="youtubeContent" class="space-y-6 hidden">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">YouTube Video URL</label>
+                    <div class="flex gap-3">
+                        <div class="flex-1 relative">
+                            <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                            </svg>
+                            <input type="url" id="youtubeUrl" placeholder="https://youtube.com/watch?v=..." class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                        </div>
+                    </div>
+                    <p class="mt-2 text-sm text-gray-500">Paste any YouTube video URL containing a recipe</p>
+                </div>
+            </div>
+
+            <!-- Process Button -->
+            <div class="mt-8">
+                <button onclick="processVideo()" id="processBtn" class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-4 rounded-xl font-semibold text-lg hover:from-orange-600 hover:to-red-600 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                    </svg>
+                    Generate Content
+                </button>
+            </div>
+
+            <!-- Features -->
+            <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="text-center p-4">
+                    <div class="bg-gradient-to-br from-orange-100 to-red-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-gray-800">Recipe Text</h3>
+                    <p class="text-sm text-gray-600 mt-1">Full ingredients & steps</p>
+                </div>
+                <div class="text-center p-4">
+                    <div class="bg-gradient-to-br from-orange-100 to-red-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-gray-800">Thumbnails</h3>
+                    <p class="text-sm text-gray-600 mt-1">3 design concepts</p>
+                </div>
+                <div class="text-center p-4">
+                    <div class="bg-gradient-to-br from-orange-100 to-red-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-gray-800">Shorts Ideas</h3>
+                    <p class="text-sm text-gray-600 mt-1">Optimized for YT Shorts</p>
+                </div>
+                <div class="text-center p-4">
+                    <div class="bg-gradient-to-br from-orange-100 to-red-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-gray-800">SEO Content</h3>
+                    <p class="text-sm text-gray-600 mt-1">Title, tags & description</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section (Hidden Initially) -->
+        <div id="resultsSection" class="hidden space-y-6">
+            <!-- Success Banner -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 flex items-center justify-between flex-wrap gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="bg-green-100 p-3 rounded-full">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-800">Content Generated Successfully!</h2>
+                        <p class="text-gray-600">All assets are ready for download and use</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="exportAll()" class="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg font-medium hover:from-orange-600 hover:to-red-600 transition-all shadow-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        Export All
+                    </button>
+                    <button onclick="resetApp()" class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-medium hover:border-gray-400 transition-all">
+                        New Video
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Content -->
+            <div id="resultsContent"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="bg-white border-t border-gray-200 mt-12">
+        <div class="max-w-7xl mx-auto px-4 py-6 text-center text-gray-600 text-sm">
+            <p>Built with HTML, CSS & JavaScript • Ready for GitHub Pages deployment</p>
+            <p class="mt-1">Note: This is a demo. Connect to real AI APIs for production use.</p>
+        </div>
+    </div>
+
+    <script>
+        let activeTab = 'upload';
+        let videoFile = null;
+        let results = null;
+
+        function switchTab(tab) {
+            activeTab = tab;
+            const uploadTab = document.getElementById('uploadTab');
+            const youtubeTab = document.getElementById('youtubeTab');
+            const uploadContent = document.getElementById('uploadContent');
+            const youtubeContent = document.getElementById('youtubeContent');
+
+            if (tab === 'upload') {
+                uploadTab.className = 'flex items-center gap-2 px-6 py-3 font-medium border-b-2 border-orange-500 text-orange-600';
+                youtubeTab.className = 'flex items-center gap-2 px-6 py-3 font-medium text-gray-500 hover:text-gray-700';
+                uploadContent.classList.remove('hidden');
+                youtubeContent.classList.add('hidden');
+            } else {
+                youtubeTab.className = 'flex items-center gap-2 px-6 py-3 font-medium border-b-2 border-orange-500 text-orange-600';
+                uploadTab.className = 'flex items-center gap-2 px-6 py-3 font-medium text-gray-500 hover:text-gray-700';
+                youtubeContent.classList.remove('hidden');
+                uploadContent.classList.add('hidden');
+            }
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('video/')) {
+                videoFile = file;
+                document.getElementById('uploadText').textContent = file.name;
+            }
+        }
+
+        async function processVideo() {
+            if (activeTab === 'upload' && !videoFile) {
+                alert('Please upload a video file');
+                return;
+            }
+            if (activeTab === 'youtube' && !document.getElementById('youtubeUrl').value) {
+                alert('Please enter a YouTube URL');
+                return;
+            }
+
+            const btn = document.getElementById('processBtn');
+            btn.innerHTML = '<svg class="w-6 h-6 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> Processing...';
+            btn.disabled = true;
+
+            // Simulate processing
+            await new Promise(resolve => setTimeout(resolve, 3000));
+
+            results = generateMockResults();
+            showResults();
+        }
+
+        function generateMockResults() {
+            return {
+                recipe: {
+                    title: 'Creamy Garlic Parmesan Pasta',
+                    prepTime: '10 minutes',
+                    cookTime: '15 minutes',
+                    servings: '4 people',
+                    ingredients: [
+                        '400g pasta (fettuccine or linguine)',
+                        '4 cloves garlic, minced',
+                        '2 cups heavy cream',
+                        '1 cup grated Parmesan cheese',
+                        '2 tbsp butter',
+                        '1 tsp Italian seasoning',
+                        'Salt and pepper to taste',
+                        'Fresh parsley for garnish'
+                    ],
+                    steps: [
+                        'Bring a large pot of salted water to boil and cook pasta according to package directions.',
+                        'In a large skillet, melt butter over medium heat and sauté minced garlic until fragrant (about 1 minute).',
+                        'Pour in heavy cream and bring to a gentle simmer. Cook for 3-4 minutes, stirring occasionally.',
+                        'Add Parmesan cheese gradually, stirring constantly until melted and sauce is smooth.',
+                        'Season with Italian seasoning, salt, and pepper.',
+                        'Drain pasta and add to the sauce. Toss to coat evenly.',
+                        'Garnish with fresh parsley and extra Parmesan. Serve immediately.'
+                    ]
+                },
+                captions: {
+                    short: '🍝 Quick & Creamy Garlic Parmesan Pasta in 25 mins! Perfect comfort food for busy weeknights. #pasta #quickrecipe #comfortfood',
+                    long: '🍝 Creamy Garlic Parmesan Pasta Recipe\n\nReady in just 25 minutes! This restaurant-quality pasta is incredibly easy to make at home.\n\n⏱️ Prep: 10 min | Cook: 15 min\n👥 Serves: 4\n\n#PastaRecipe #ItalianFood #ComfortFood'
+                },
+                seo: {
+                    title: 'Easy Creamy Garlic Parmesan Pasta Recipe | Ready in 25 Minutes!',
+                    tags: ['pasta recipe', 'easy dinner', 'garlic parmesan', 'italian food', 'quick recipes']
+                }
+            };
+        }
+
+        function showResults() {
+            document.getElementById('uploadSection').classList.add('hidden');
+            document.getElementById('resultsSection').classList.remove('hidden');
+            
+            const content = `
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">${results.recipe.title}</h2>
+                    
+                    <div class="flex gap-6 mb-8 pb-6 border-b border-gray-200">
+                        <div><p class="text-sm text-gray-500">Prep Time</p><p class="font-semibold">${results.recipe.prepTime}</p></div>
+                        <div><p class="text-sm text-gray-500">Cook Time</p><p class="font-semibold">${results.recipe.cookTime}</p></div>
+                        <div><p class="text-sm text-gray-500">Servings</p><p class="font-semibold">${results.recipe.servings}</p></div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="text-lg font-bold mb-4">Ingredients</h3>
+                            <ul class="space-y-2">
+                                ${results.recipe.ingredients.map(ing => `<li class="flex gap-2"><span class="text-orange-500">•</span><span>${ing}</span></li>`).join('')}
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold mb-4">Instructions</h3>
+                            <ol class="space-y-3">
+                                ${results.recipe.steps.map((step, i) => `
+                                    <li class="flex gap-3">
+                                        <span class="flex-shrink-0 w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm font-bold">${i + 1}</span>
+                                        <span class="text-gray-700">${step}</span>
+                                    </li>
+                                `).join('')}
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <h2 class="text-2xl font-bold mb-6">Social Media Captions</h2>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                            <h3 class="font-semibold mb-2">Short Caption</h3>
+                            <p>${results.captions.short}</p>
+                        </div>
+                        <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                            <h3 class="font-semibold mb-2">Long Caption</h3>
+                            <p class="whitespace-pre-line">${results.captions.long}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <h2 class="text-2xl font-bold mb-6">SEO & YouTube Optimization</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="font-semibold mb-2">Optimized Title</h3>
+                            <p class="p-3 bg-gray-50 rounded-lg">${results.seo.title}</p>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold mb-2">Tags</h3>
+                            <div class="flex flex-wrap gap-2">
+                                ${results.seo.tags.map(tag => `<span class="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('resultsContent').innerHTML = content;
+        }
+
+        function exportAll() {
+            if (!results) return;
+            
+            const content = `
+${results.recipe.title}
+${'='.repeat(results.recipe.title.length)}
+
+Prep Time: ${results.recipe.prepTime}
+Cook Time: ${results.recipe.cookTime}
+Servings: ${results.recipe.servings}
+
+INGREDIENTS:
+${results.recipe.ingredients.map((ing, i) => `${i + 1}. ${ing}`).join('\n')}
+
+INSTRUCTIONS:
+${results.recipe.steps.map((step, i) => `${i + 1}. ${step}`).join('\n\n')}
+
+SOCIAL MEDIA CAPTIONS:
+
+Short Caption:
+${results.captions.short}
+
+Long Caption:
+${results.captions.long}
+
+SEO OPTIMIZATION:
+
+Title: ${results.seo.title}
+Tags: ${results.seo.tags.join(', ')}
+            `.trim();
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'recipe-content.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function resetApp() {
+            document.getElementById('uploadSection').classList.remove('hidden');
+            document.getElementById('resultsSection').classList.add('hidden');
+            document.getElementById('processBtn').innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg> Generate Content';
+            document.getElementById('processBtn').disabled = false;
+            document.getElementById('uploadText').textContent = 'Click to upload or drag and drop';
+            document.getElementById('youtubeUrl').value = '';
+            document.getElementById('videoUpload').value = '';
+            videoFile = null;
+            results = null;
+        }
+    </script>
+</body>
+</html>
